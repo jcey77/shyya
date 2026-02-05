@@ -3,184 +3,252 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sheyya Arcade x Spongebob</title>
+    <title>Sheyya Premium & Kebsos</title>
     <style>
-        :root {
-            --accent: #ff007f;
-            --gold: #ffd700;
-            --ocean: #1e3c72;
-        }
-
-        body {
-            margin: 0; background: #0a0a12;
-            font-family: 'Segoe UI', sans-serif;
-            display: flex; justify-content: center; align-items: center;
-            min-height: 100vh; color: white; overflow: hidden;
-        }
-
-        /* CABINET AREA */
-        .cabinet {
-            width: 350px; background: #2c3e50;
-            border-radius: 25px; padding: 15px;
-            border: 6px solid #1a1a2e; position: relative;
-            z-index: 2; box-shadow: 0 0 50px rgba(0,0,0,1);
-        }
-
-        .header { text-align: center; padding: 10px; background: #1a1a2e; border-radius: 15px; border: 2px solid var(--accent); cursor: pointer; }
-        .glass { height: 220px; background: linear-gradient(to bottom, #1e3c72, #2a5298); border-radius: 12px; position: relative; overflow: hidden; border: 4px solid #000; }
+        :root { --primary: #6C5CE7; --bg: #F0F2F5; --border: #222; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); padding: 20px; display: flex; flex-direction: column; align-items: center; margin: 0; }
         
-        /* CLAW & EGG */
-        .claw { position: absolute; top: 0; left: 50%; width: 40px; height: 100%; transform: translateX(-50%); transition: left 0.3s; z-index: 5; }
-        .string { width: 4px; height: 30px; background: #eee; margin: 0 auto; transition: height 0.8s; }
-        .hand { width: 30px; height: 20px; background: #95a5a6; margin: 0 auto; border-radius: 0 0 10px 10px; }
-        .egg { position: absolute; bottom: 10px; left: 50%; width: 40px; height: 55px; transform: translateX(-50%); background: var(--accent); border-radius: 50% 50% 50% 50% / 65% 65% 35% 35%; border: 2px solid white; transition: all 0.5s; }
-
-        /* WIDGET SPONGEBOB */
-        .spongebob-widget {
-            position: fixed; bottom: -10px; right: -20px;
-            width: 150px; z-index: 10; transition: 0.3s;
-        }
-
-        .bubble {
-            position: absolute; top: -50px; left: -50px;
-            background: white; color: black; padding: 10px;
-            border-radius: 15px; font-size: 12px; font-weight: bold;
-            width: 120px; display: none; border: 2px solid #f1c40f;
-        }
-
-        .bubble::after {
-            content: ''; position: absolute; bottom: -10px; right: 20px;
-            border-width: 10px 10px 0 0; border-style: solid; border-color: white transparent;
-        }
-
-        /* ADMIN & CONTROLS */
-        .controls { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 15px; }
-        .btn { background: #444; border: none; padding: 10px; color: white; border-radius: 8px; cursor: pointer; font-weight: bold; }
-        .btn-grab { background: #27ae60; grid-column: span 3; padding: 15px; font-size: 16px; margin-top: 10px; }
+        #admin-panel { display: none; width: 100%; max-width: 450px; background: #fff; border: 3px solid var(--border); border-radius: 10px; padding: 15px; margin-bottom: 20px; box-shadow: 5px 5px 0px var(--border); box-sizing: border-box; position: relative; z-index: 1000; }
         
-        #admin-panel { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #111; z-index: 100; border-radius: 20px; padding: 20px; box-sizing: border-box; }
-        .shaking { animation: shake 0.3s infinite; }
-        @keyframes shake { 50% { transform: translateX(-50%) rotate(5deg); } }
+        .tab-container { display: flex; width: 100%; max-width: 450px; gap: 10px; margin-bottom: 15px; }
+        .tab-btn { flex: 1; padding: 12px; border: 2px solid var(--border); border-radius: 12px; font-weight: bold; cursor: pointer; background: white; transition: 0.2s; box-shadow: 4px 4px 0px var(--border); }
+        .tab-btn.active { background: var(--primary); color: white; transform: translate(2px, 2px); box-shadow: 1px 1px 0px var(--border); }
+
+        .game-nav { display: flex; gap: 8px; margin-bottom: 15px; width: 100%; max-width: 450px; }
+        .btn-game { flex: 1; background: #FFD700; border: 2px solid var(--border); padding: 8px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 0.65em; box-shadow: 3px 3px 0px var(--border); }
+        
+        .container { width: 100%; max-width: 450px; background: white; border: 3px solid var(--border); border-radius: 20px; padding: 25px; box-shadow: 10px 10px 0px var(--border); box-sizing: border-box; position: relative; overflow: hidden; }
+        #tutup-overlay { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.98); z-index: 500; flex-direction: column; justify-content: center; align-items: center; text-align: center; font-weight: bold; color: #ff4d4d; }
+
+        .store-name { text-align: center; font-size: 2.2em; font-weight: 900; color: var(--primary); text-transform: lowercase; margin: 0; text-shadow: 2px 2px 0px var(--border); }
+        .subtitle { text-align: center; font-size: 0.85em; color: #555; margin-bottom: 25px; border-bottom: 2px dashed #ccc; padding-bottom: 15px; }
+        
+        .admin-section { margin-top: 10px; padding-top: 10px; border-top: 1px solid #eee; }
+        .stock-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; font-size: 0.8em; }
+        .switch { position: relative; display: inline-block; width: 34px; height: 18px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 20px; border: 1px solid var(--border); }
+        .slider:before { position: absolute; content: ""; height: 12px; width: 12px; left: 2px; bottom: 2px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: #25D366; }
+        input:checked + .slider:before { transform: translateX(16px); }
+
+        label { font-weight: bold; font-size: 0.85em; display: block; margin-bottom: 5px; }
+        select, input { width: 100%; padding: 12px; margin-bottom: 15px; border: 2px solid var(--border); border-radius: 10px; box-sizing: border-box; font-size: 14px; outline: none; }
+        .price-box { background: #fdfdfd; border: 2px solid var(--border); border-radius: 12px; padding: 15px; text-align: center; margin-bottom: 20px; }
+        .price-val { font-size: 1.8em; font-weight: 800; color: var(--primary); }
+        .btn-order { width: 100%; background: var(--primary); color: white; border: 2px solid var(--border); padding: 18px; border-radius: 12px; font-weight: bold; font-size: 1.1em; cursor: pointer; box-shadow: 0 5px 0 #3b2e96; }
     </style>
 </head>
 <body>
 
-<div class="cabinet">
-    <div class="header" onclick="openAdmin()">
-        <h2 style="margin:0; font-size: 18px; color:var(--accent)">SHEYYA ARCADE</h2>
+<div id="admin-panel">
+    <div style="display:flex; justify-content:space-between; font-weight:bold;">
+        <span>🛠️ PANEL ADMIN</span>
+        <button onclick="document.getElementById('admin-panel').style.display='none'">X</button>
     </div>
-
-    <div style="text-align: center; color: var(--gold); font-size: 13px; margin: 8px 0;">
-        🪙 KOIN: <span id="coin-val">0</span> / <span id="limit-val">5</span>
-    </div>
-
-    <div class="glass">
-        <div class="claw" id="claw-unit">
-            <div class="string" id="string"></div>
-            <div class="hand"></div>
+    <div class="admin-section">
+        <label><input type="checkbox" id="status-toggle" onchange="toggleLayanan()"> TUTUP TOKO</label>
+        <hr>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span id="label-metode">DANA Aktif</span>
+            <label class="switch"><input type="checkbox" id="payment-toggle" onchange="togglePayment()"><span class="slider"></span></label>
         </div>
-        <div class="egg" id="egg"></div>
     </div>
-
-    <div class="controls">
-        <button class="btn" onclick="move('L')">◀</button>
-        <button class="btn" onclick="addCoin()" style="background:#3498db">IN COIN</button>
-        <button class="btn" onclick="move('R')">▶</button>
-        <button class="btn btn-grab" onclick="grab()">TANGKAP!</button>
-    </div>
-
-    <div id="admin-panel">
-        <h3 style="color:var(--gold)">ADMIN SHEYYA</h3>
-        <label>Limit Koin:</label>
-        <input type="number" id="adm-limit" style="width:100%; padding:5px; margin:10px 0;" value="5">
-        <button class="btn" style="background:var(--gold); color:black; width:100%" onclick="saveAdmin()">SAVE</button>
-        <button class="btn" style="width:100%; margin-top:5px" onclick="closeAdmin()">CLOSE</button>
-    </div>
+    <div class="admin-section"><label>Atur Stok:</label><div id="stock-manager"></div></div>
 </div>
 
-<div class="spongebob-widget" id="spongebob">
-    <div class="bubble" id="bob-bubble">Aku siap! Aku siap!</div>
-    <svg width="120" height="120" viewBox="0 0 100 100">
-        <rect x="20" y="20" width="60" height="60" fill="#f1c40f" stroke="#000" stroke-width="2"/>
-        <rect x="30" y="35" width="10" height="10" fill="white" stroke="#000"/>
-        <rect x="60" y="35" width="10" height="10" fill="white" stroke="#000"/>
-        <rect x="40" y="60" width="20" height="5" fill="#e74c3c"/>
-        <rect x="20" y="80" width="60" height="15" fill="#7e5109"/> </svg>
+<div class="tab-container">
+    <button id="tab-app" class="tab-btn active" onclick="switchTab('app')">📱 APLIKASI</button>
+    <button id="tab-kebsos" class="tab-btn" onclick="switchTab('kebsos')">🚀 KEBSOS</button>
+</div>
+
+<div class="game-nav">
+    <button class="btn-game" onclick="toggleGame('spin')">🎡 SPIN</button>
+    <button class="btn-game" onclick="toggleGame('box')">🎁 BOX</button>
+</div>
+
+<div class="container">
+    <div id="tutup-overlay">😴<br>SEDANG ISTIRAHAT</div>
+    <div class="store-name" id="display-title">sheyya premium</div>
+    <p class="subtitle" id="display-subtitle">Official App Premium</p>
+
+    <label id="label-pilih">📺 Pilih Aplikasi</label>
+    <select id="category" onchange="updateService()"></select>
+    
+    <label>💎 Pilih Paket</label>
+    <select id="service" onchange="applyPromo()"><option value="">-- Pilih --</option></select>
+
+    <div class="price-box">
+        <div id="display-price" class="price-val">Rp 0</div>
+        <div id="discount-info" style="color:green; font-size:0.8em; font-weight:bold;"></div>
+        <div style="font-size:0.75em; margin-top:10px; border-top:1px solid #eee; padding-top:10px;">
+            💳 <span id="name-pay">DANA</span>: <b>0895324866749</b> 
+            <button onclick="navigator.clipboard.writeText('0895324866749'); alert('Salin!');" style="font-size:0.7em;">SALIN</button>
+        </div>
+    </div>
+
+    <input type="text" id="buyer-name" placeholder="Nama Lengkap">
+    <input type="text" id="redeem-code" placeholder="Kode Promo / Admin" onkeyup="checkAdminPassword(); applyPromo();">
+    <button class="btn-order" onclick="sendToWA()">ORDER SEKARANG</button>
 </div>
 
 <script>
-    let coins = 0;
-    let limit = 5;
-    let password = "sheyya221";
-    let pos = 50;
-    let busy = false;
+let currentTab = 'app';
 
-    const phrases = ["Aku siap!", "Ayo Sheyya!", "Pasti dapet!", "Hampir saja!", "Puja Kerang Ajaib!"];
+const dataApp = {
+    "Netflix": [{name: "1p2u", price: 26200}, {name: "1p1u", price: 35200}, {name: "1 Minggu", price: 15600}],
+    "Viu": [{name: "Premium Lifetime", price: 2500}],
+    "Youku": [{name: "Sharing 1 Bulan", price: 11340}],
+    "Prime Video": [{name: "Private 1 Bulan", price: 8200}],
+    "Capcut": [
+        {name: "Sharing 1 Bulan Promo", price: 4300}, {name: "Sharing 1 Bulan", price: 5700},
+        {name: "Sharing 6 Bulan", price: 9300}, {name: "Sharing 12 Bulan", price: 16200},
+        {name: "Private 1 Bulan", price: 8320}, {name: "Private 6 Bulan", price: 18880}, {name: "Private 12 Bulan", price: 32500}
+    ],
+    "Canva": [
+        {name: "Member 1 Bulan", price: 4000}, {name: "Member 1 Tahun", price: 6200},
+        {name: "Owner 1 Bulan", price: 14880}, {name: "Owner 1 Tahun", price: 30400}
+    ],
+    "Bstation": [{name: "Sharing 1 Bulan", price: 7000}, {name: "Private 1 bln", price: 32000}],
+    "YouTube": [{name: "Indplan 1 bln", price: 15300}],
+    "WeTV": [{name: "Sharing 1 Bulan 8u", price: 6000}, {name: "Sharing 1 Bulan 5u", price: 10000}, {name: "Private 1 Bulan", price: 23000}],
+    "Vidio": [{name: "Platinum Sharing", price: 24000}, {name: "Platinum Private", price: 37000}],
+    "Alight Motion": [{name: "Private 1 Tahun", price: 2500}, {name: "Private 2 Tahun", price: 5000}],
+    "Picsart": [{name: "Sharing 1 Bulan", price: 5000}, {name: "Private 1 Bulan", price: 8320}],
+    "Crunchyroll": [{name: "Sharing 35 Hari", price: 8000}],
+    "HBO Max": [{name: "Sharing 1 Bulan", price: 17000}, {name: "Standar Private 1 Bulan", price: 80000}],
+    "VSCO": [{name: "Plus Andro iOS 1 Tahun", price: 8000}]
+};
 
-    function talk(msg) {
-        const bubble = document.getElementById('bob-bubble');
-        bubble.innerText = msg || phrases[Math.floor(Math.random() * phrases.length)];
-        bubble.style.display = 'block';
-        setTimeout(() => bubble.style.display = 'none', 3000);
+const dataKebsos = {
+    "WA Channel Member": [
+        {name: "10 Member", price: 1000}, {name: "100 Member", price: 10000},
+        {name: "500 Member", price: 50000}, {name: "1000 Member", price: 100000},
+        {name: "2000 Member", price: 200000}, {name: "3000 Member", price: 300000}
+    ],
+    "TikTok Followers": [
+        {name: "100 Followers", price: 3950}, {name: "500 Followers", price: 19750},
+        {name: "1000 Followers", price: 39500}, {name: "2000 Followers", price: 79000},
+        {name: "3000 Followers", price: 118500}, {name: "4000 Followers", price: 158000}
+    ],
+    "TikTok Views": [
+        {name: "100 Views", price: 30}, {name: "500 Views", price: 150},
+        {name: "1000 Views", price: 300}, {name: "2000 Views", price: 600},
+        {name: "3000 Views", price: 900}, {name: "4000 Views", price: 1200}, {name: "5000 Views", price: 1500}
+    ],
+    "Instagram Likes": [
+        {name: "100 Likes", price: 1000}, {name: "500 Likes", price: 5000},
+        {name: "1000 Likes", price: 10000}, {name: "2000 Likes", price: 20000},
+        {name: "3000 Likes", price: 30000}, {name: "4000 Likes", price: 40000}, {name: "5000 Likes", price: 50000}
+    ],
+    "Instagram Followers": [
+        {name: "100 Followers", price: 5247}, {name: "500 Followers", price: 26235},
+        {name: "1000 Followers", price: 52470}, {name: "2000 Followers", price: 104940},
+        {name: "3000 Followers", price: 157410}, {name: "4000 Followers", price: 209880}
+    ]
+};
+
+const listPromo = { "ZAMI-G4NT3N6": 2000, "Z4MIIII2026!!": 1000, "ZAMIBERKELAS2026!": 500, "ASHEYYA-OFFICIAL": 2000 };
+let soldOutStatus = JSON.parse(localStorage.getItem('soldOutData')) || {};
+
+function switchTab(tab) {
+    currentTab = tab;
+    document.getElementById('tab-app').className = tab === 'app' ? 'tab-btn active' : 'tab-btn';
+    document.getElementById('tab-kebsos').className = tab === 'kebsos' ? 'tab-btn active' : 'tab-btn';
+    document.getElementById('display-title').innerText = tab === 'app' ? 'sheyya premium' : 'sheyya kebsos';
+    document.getElementById('display-subtitle').innerText = tab === 'app' ? 'Official App Premium' : 'Social Media Booster';
+    document.getElementById('label-pilih').innerText = tab === 'app' ? '📺 Pilih Aplikasi' : '🚀 Pilih Sosmed';
+    init();
+}
+
+function init() {
+    const data = currentTab === 'app' ? dataApp : dataKebsos;
+    const catEl = document.getElementById('category');
+    const stockEl = document.getElementById('stock-manager');
+    catEl.innerHTML = '<option value="">-- Pilih --</option>';
+    stockEl.innerHTML = '';
+
+    Object.keys(data).forEach(cat => {
+        let isSold = soldOutStatus[cat] || false;
+        let opt = new Option(isSold ? cat + " (SOLD)" : cat, cat);
+        if (isSold) opt.disabled = true;
+        catEl.add(opt);
+
+        let item = document.createElement('div');
+        item.className = 'stock-item';
+        item.innerHTML = `<span>${cat}</span><label class="switch"><input type="checkbox" ${isSold?'checked':''} onchange="setSoldOut('${cat}', this.checked)"><span class="slider"></span></label>`;
+        stockEl.appendChild(item);
+    });
+
+    const isTutup = localStorage.getItem('tokoTertutup') === 'true';
+    document.getElementById('status-toggle').checked = isTutup;
+    document.getElementById('tutup-overlay').style.display = isTutup ? "flex" : "none";
+}
+
+function setSoldOut(cat, isSold) { 
+    soldOutStatus[cat] = isSold; 
+    localStorage.setItem('soldOutData', JSON.stringify(soldOutStatus));
+    init(); updateService(); 
+}
+
+function toggleLayanan() { 
+    const isChecked = document.getElementById('status-toggle').checked;
+    document.getElementById('tutup-overlay').style.display = isChecked ? "flex" : "none";
+    localStorage.setItem('tokoTertutup', isChecked);
+}
+
+function updateService() {
+    const data = currentTab === 'app' ? dataApp : dataKebsos;
+    const cat = document.getElementById('category').value;
+    const servEl = document.getElementById('service');
+    servEl.innerHTML = '<option value="">-- Pilih --</option>';
+    if(cat && !soldOutStatus[cat]) data[cat].forEach(i => servEl.add(new Option(i.name, i.price)));
+    applyPromo();
+}
+
+function applyPromo() {
+    let price = parseInt(document.getElementById('service').value) || 0;
+    const code = document.getElementById('redeem-code').value.trim().toUpperCase();
+    const info = document.getElementById('discount-info');
+    info.innerText = "";
+    if(price >= 5000 && listPromo[code]) {
+        price -= listPromo[code];
+        info.innerText = "PROMO AKTIF: -Rp " + listPromo[code].toLocaleString();
     }
+    document.getElementById('display-price').innerText = "Rp " + price.toLocaleString('id-ID');
+}
 
-    function openAdmin() {
-        if(prompt("Password:") === password) document.getElementById('admin-panel').style.display = 'block';
+function checkAdminPassword() {
+    if(document.getElementById('redeem-code').value === "sheyya221") {
+        document.getElementById('admin-panel').style.display = "block";
+        document.getElementById('redeem-code').value = "";
     }
+}
 
-    function closeAdmin() { document.getElementById('admin-panel').style.display = 'none'; }
+function toggleGame(t) {
+    if((parseInt(document.getElementById('service').value) || 0) < 5000) return alert("Min. belanja 5k!");
+    if(t === 'box') {
+        let h = Math.floor(Math.random() * 3) + 1;
+        if(prompt("Pilih Kotak 1, 2, atau 3?") == h) alert("HOKI! Kode Promo: ZAMI-G4NT3N6");
+        else alert("ZONK! Coba lagi.");
+    } else alert("Mainkan game untuk diskon tambahan!");
+}
 
-    function saveAdmin() {
-        limit = document.getElementById('adm-limit').value;
-        document.getElementById('limit-val').innerText = limit;
-        closeAdmin();
-    }
+function togglePayment() {
+    const isGopay = document.getElementById('payment-toggle').checked;
+    document.getElementById('label-metode').innerText = isGopay ? "GOPAY Aktif" : "DANA Aktif";
+    document.getElementById('name-pay').innerText = isGopay ? "GOPAY" : "DANA";
+}
 
-    function addCoin() {
-        if(coins < limit) {
-            coins++;
-            document.getElementById('coin-val').innerText = coins;
-            talk("Yess! Koin masuk!");
-        } else talk("Koinnya abis, Sheyya!");
-    }
-
-    function move(dir) {
-        if(busy || coins <= 0) return;
-        dir === 'L' ? pos -= 10 : pos += 10;
-        if(pos < 10) pos = 10; if(pos > 90) pos = 90;
-        document.getElementById('claw-unit').style.left = pos + '%';
-    }
-
-    function grab() {
-        if(busy || coins <= 0) return;
-        busy = true; coins--;
-        document.getElementById('coin-val').innerText = coins;
-        
-        document.getElementById('string').style.height = "160px";
-        talk("Tangkap dia!");
-
-        setTimeout(() => {
-            if(pos >= 45 && pos <= 55) {
-                document.getElementById('egg').style.bottom = "160px";
-                document.getElementById('egg').classList.add('shaking');
-                setTimeout(() => {
-                    document.getElementById('string').style.height = "30px";
-                    document.getElementById('egg').style.bottom = "135px";
-                    setTimeout(() => {
-                        talk("HOORAY! KAMU MENANG!");
-                        alert("Kamu dapat boneka misterius!");
-                        location.reload();
-                    }, 800);
-                }, 1000);
-            } else {
-                setTimeout(() => {
-                    document.getElementById('string').style.height = "30px";
-                    talk("Yahh... meleset.");
-                    setTimeout(() => busy = false, 800);
-                }, 1000);
-            }
-        }, 800);
-    }
+function sendToWA() {
+    const n = document.getElementById('buyer-name').value;
+    const c = document.getElementById('category').value;
+    const s = document.getElementById('service').options[document.getElementById('service').selectedIndex].text;
+    if(!n || !c || s.includes("--")) return alert("Lengkapi data!");
+    const finalPrice = document.getElementById('display-price').innerText;
+    window.open(`https://wa.me/62895324866749?text=Order%20${currentTab.toUpperCase()}%0AItem:%20${c}%20(${s})%0ANama:%20${n}%0ATotal:%20${finalPrice}`);
+}
+init();
 </script>
 </body>
 </html>
