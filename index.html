@@ -3,49 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>sheyya app prem & kebsos</title>
+    <title>sheyya store - premium apps</title>
     <style>
         :root { --primary: #6C5CE7; --bg: #F0F2F5; --border: #222; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); padding: 20px; display: flex; flex-direction: column; align-items: center; margin: 0; }
         
-        /* PANEL ADMIN */
+        /* ADMIN PANEL */
         #admin-panel { display: none; width: 100%; max-width: 450px; background: #fff; border: 3px solid var(--border); border-radius: 10px; padding: 15px; margin-bottom: 20px; box-shadow: 5px 5px 0px var(--border); box-sizing: border-box; position: relative; z-index: 3000; }
-        
-        .tab-container { display: flex; width: 100%; max-width: 450px; gap: 10px; margin-bottom: 15px; position: relative; z-index: 1000; }
-        .tab-btn { flex: 1; padding: 12px; border: 2px solid var(--border); border-radius: 12px; font-weight: bold; cursor: pointer; background: white; transition: 0.2s; box-shadow: 4px 4px 0px var(--border); }
+        .admin-section { border-top: 1px solid #eee; margin-top: 10px; padding-top: 10px; font-size: 0.8em; }
+        .promo-list-item { display: flex; justify-content: space-between; background: #f9f9f9; padding: 5px 10px; margin-top: 5px; border-radius: 5px; border: 1px solid #ddd; }
+        .btn-del { background: #ff4d4d; color: white; border: none; padding: 2px 8px; border-radius: 4px; cursor: pointer; }
+
+        /* TABS */
+        .tab-container { display: flex; width: 100%; max-width: 450px; gap: 10px; margin-bottom: 15px; }
+        .tab-btn { flex: 1; padding: 12px; border: 2px solid var(--border); border-radius: 12px; font-weight: bold; cursor: pointer; background: white; box-shadow: 4px 4px 0px var(--border); }
         .tab-btn.active { background: var(--primary); color: white; transform: translate(2px, 2px); box-shadow: 1px 1px 0px var(--border); }
 
-        .container { width: 100%; max-width: 450px; background: white; border: 3px solid var(--border); border-radius: 20px; padding: 25px; box-shadow: 10px 10px 0px var(--border); box-sizing: border-box; position: relative; overflow: visible; }
-        
-        /* OVERLAY TUTUP TOKO */
+        .container { width: 100%; max-width: 450px; background: white; border: 3px solid var(--border); border-radius: 20px; padding: 25px; box-shadow: 10px 10px 0px var(--border); box-sizing: border-box; position: relative; }
         #tutup-overlay { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.98); z-index: 500; flex-direction: column; justify-content: center; align-items: center; text-align: center; font-weight: bold; color: #ff4d4d; border-radius: 20px; }
 
-        /* INPUT AREA YANG TETAP AKTIF (PINTU BELAKANG) */
-        .admin-access-zone { position: relative; z-index: 1001; margin-top: 15px; }
-
-        .store-name { text-align: center; font-size: 1.8em; font-weight: 900; color: var(--primary); text-transform: lowercase; margin: 0; text-shadow: 2px 2px 0px var(--border); line-height: 1.2; }
-        .subtitle { text-align: center; font-size: 0.85em; color: #555; margin-bottom: 25px; border-bottom: 2px dashed #ccc; padding-bottom: 15px; }
+        .store-name { text-align: center; font-size: 1.6em; font-weight: 900; color: var(--primary); text-transform: lowercase; margin: 0; text-shadow: 2px 2px 0px var(--border); }
+        .subtitle { text-align: center; font-size: 0.8em; color: #555; margin-bottom: 20px; border-bottom: 2px dashed #ccc; padding-bottom: 15px; }
         
         label { font-weight: bold; font-size: 0.85em; display: block; margin-bottom: 5px; }
-        select, input { width: 100%; padding: 12px; margin-bottom: 15px; border: 2px solid var(--border); border-radius: 10px; box-sizing: border-box; font-size: 14px; outline: none; background: white; }
+        select, input { width: 100%; padding: 12px; margin-bottom: 15px; border: 2px solid var(--border); border-radius: 10px; box-sizing: border-box; outline: none; background: white; }
+        
         .price-box { background: #fdfdfd; border: 2px solid var(--border); border-radius: 12px; padding: 15px; text-align: center; margin-bottom: 20px; }
         .price-val { font-size: 1.8em; font-weight: 800; color: var(--primary); }
+        .discount-label { font-size: 0.75em; color: #2ecc71; font-weight: bold; display: none; margin-bottom: 5px; }
+
+        .pay-info { font-size: 0.75em; margin-top: 10px; background: #f0f0f0; padding: 10px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .btn-copy { background: var(--primary); color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+
         .btn-order { width: 100%; background: var(--primary); color: white; border: 2px solid var(--border); padding: 18px; border-radius: 12px; font-weight: bold; cursor: pointer; box-shadow: 0 5px 0 #3b2e96; }
-        .stock-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; font-size: 0.8em; border-bottom: 1px solid #eee; padding: 5px 0; }
+
+        /* INVOICE MODAL */
+        #invoice-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 5000; justify-content: center; align-items: center; padding: 20px; }
+        .invoice-card { background: white; border: 3px solid var(--border); border-radius: 15px; width: 100%; max-width: 350px; padding: 20px; box-shadow: 10px 10px 0px var(--border); }
+
+        .switch { position: relative; display: inline-block; width: 34px; height: 18px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 20px; }
+        .slider:before { position: absolute; content: ""; height: 12px; width: 12px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: #2ecc71; }
+        input:checked + .slider:before { transform: translateX(16px); }
     </style>
 </head>
 <body>
 
 <div id="admin-panel">
-    <div style="display:flex; justify-content:space-between; font-weight:bold; align-items: center;">
-        <span>🛠️ ADMIN SHEYYA</span>
-        <button onclick="document.getElementById('admin-panel').style.display='none'" style="background:#ff4d4d; color:white; border:2px solid #222; border-radius:5px; cursor:pointer;">X</button>
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+        <strong>🛠️ ADMIN SHEYYA</strong>
+        <button onclick="document.getElementById('admin-panel').style.display='none'">X</button>
     </div>
-    <div style="margin-top:15px; padding: 10px; background: #f9f9f9; border-radius: 10px; border: 1px solid #ddd;">
+    
+    <div class="admin-section">
+        <label>Tambah Kode Promo Baru:</label>
+        <div style="display:flex; gap:5px;">
+            <input type="text" id="new-promo-name" placeholder="KODE" style="margin-bottom:5px; flex:2;">
+            <input type="number" id="new-promo-val" placeholder="Rp" style="margin-bottom:5px; flex:1;">
+        </div>
+        <button onclick="addNewPromo()" style="width:100%; background:var(--primary); color:white; border:none; padding:8px; border-radius:5px; cursor:pointer;">Tambah Kode</button>
+    </div>
+
+    <div class="admin-section">
+        <label>Daftar Kode Promo Aktif:</label>
+        <div id="promo-list-admin" style="max-height:100px; overflow-y:auto; border:1px solid #eee; padding:5px;"></div>
+    </div>
+
+    <div class="admin-section">
         <label><input type="checkbox" id="status-toggle" onchange="toggleLayanan()"> ⛔ TUTUP TOKO</label>
-        <hr>
-        <label>Atur Stok (Ceklis jika Kosong):</label>
-        <div id="stock-manager" style="max-height: 200px; overflow-y: auto;"></div>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span>Metode: <b id="label-metode">DANA</b></span>
+            <label class="switch"><input type="checkbox" id="pay-switch" onchange="togglePay()"><span class="slider"></span></label>
+        </div>
+    </div>
+    
+    <div class="admin-section">
+        <label>Kelola Stok (Check = SOLD):</label>
+        <div id="stock-manager" style="max-height:100px; overflow-y:auto; border:1px solid #eee; padding:5px;"></div>
     </div>
 </div>
 
@@ -55,32 +91,44 @@
 </div>
 
 <div class="container">
-    <div id="tutup-overlay">😴<br>SHEY SEDANG ISTIRAHAT<br><small style="font-size: 0.6em;">Gunakan Kode Admin di bawah untuk Masuk</small></div>
-    
-    <div class="store-name">sheyya app prem & kebsos</div>
+    <div id="tutup-overlay">😴<br>SHEY SEDANG ISTIRAHAT</div>
+    <div class="store-name">sheyya store</div>
     <p class="subtitle" id="display-subtitle">Official App Premium</p>
 
-    <label id="label-cat">📺 Pilih Aplikasi</label>
+    <label>📺 Pilih Layanan</label>
     <select id="category" onchange="updateService()"></select>
     
     <label>💎 Pilih Paket</label>
-    <select id="service" onchange="applyPromo()"></select>
+    <select id="service" onchange="updatePrice()"></select>
 
     <div class="price-box">
+        <div id="discount-info" class="discount-label">DISKON TERPASANG!</div>
         <div id="display-price" class="price-val">Rp 0</div>
+        <div class="pay-info">
+            <span>💳 <span id="pay-name">DANA</span>: <b id="pay-num">0895324866749</b></span>
+            <button class="btn-copy" onclick="copyNum()">SALIN</button>
+        </div>
     </div>
 
-    <input type="text" id="buyer-name" placeholder="Nama Lengkap">
-    
-    <div class="admin-access-zone">
-        <input type="text" id="redeem-code" placeholder="Kode Promo / Sandi Admin" onkeyup="checkAdminPassword(); applyPromo();">
-    </div>
+    <input type="text" id="buyer-name" placeholder="Nama Lengkap Pembeli">
+    <input type="text" id="redeem-code" placeholder="Punya Kode Promo? Masukin sini" onkeyup="checkCodes()">
 
-    <button class="btn-order" onclick="sendToWA()">ORDER SEKARANG</button>
+    <button class="btn-order" onclick="generateInvoice()">ORDER SEKARANG</button>
+</div>
+
+<div id="invoice-modal">
+    <div class="invoice-card">
+        <div style="text-align:center; border-bottom:2px dashed #ccc; padding-bottom:10px; margin-bottom:15px;">
+            <h3 style="margin:0; color:var(--primary);">STRUK BELANJA</h3>
+        </div>
+        <div id="inv-content" style="font-size:0.85em; line-height:1.8;"></div>
+        <button class="btn-order" onclick="sendToWA()" style="margin-top:15px; padding:12px;">KIRIM KE WHATSAPP</button>
+        <button onclick="document.getElementById('invoice-modal').style.display='none'" style="width:100%; background:none; border:none; color:gray; margin-top:10px; cursor:pointer;">Batal</button>
+    </div>
 </div>
 
 <script>
-let currentTab = 'app';
+// DATA PRODUK
 const dataApp = {
     "Netflix": [{name: "1p2u", price: 26200}, {name: "1p1u", price: 35200}, {name: "1 Minggu", price: 15600}],
     "Viu": [{name: "Premium Lifetime", price: 2500}],
@@ -107,14 +155,68 @@ const dataKebsos = {
     "TikTok Views": [{name: "100 View", price: 30}, {name: "500 View", price: 150}, {name: "1000 View", price: 300}, {name: "2000 View", price: 600}, {name: "3000 View", price: 900}, {name: "4000 View", price: 1200}, {name: "5000 View", price: 1500}]
 };
 
+let currentTab = 'app';
+let currentDiscount = 0;
 let soldOutStatus = JSON.parse(localStorage.getItem('soldOutData')) || {};
+let myPromos = JSON.parse(localStorage.getItem('sheyyaPromos')) || {"SHEYMURAH": 1000};
+
+function checkCodes() {
+    const input = document.getElementById('redeem-code').value.toUpperCase();
+    if(input === "SHEYYA221") {
+        document.getElementById('admin-panel').style.display = "block";
+        document.getElementById('redeem-code').value = "";
+        renderPromoList();
+        return;
+    }
+    if(myPromos[input]) {
+        currentDiscount = myPromos[input];
+        document.getElementById('discount-info').style.display = "block";
+        document.getElementById('discount-info').innerText = `KODE AKTIF: -Rp ${currentDiscount.toLocaleString()}`;
+    } else {
+        currentDiscount = 0;
+        document.getElementById('discount-info').style.display = "none";
+    }
+    updatePrice();
+}
+
+function addNewPromo() {
+    const name = document.getElementById('new-promo-name').value.toUpperCase().trim();
+    const val = parseInt(document.getElementById('new-promo-val').value);
+    if(name && val) {
+        myPromos[name] = val;
+        localStorage.setItem('sheyyaPromos', JSON.stringify(myPromos));
+        document.getElementById('new-promo-name').value = "";
+        document.getElementById('new-promo-val').value = "";
+        renderPromoList();
+        alert("Kode " + name + " ditambahkan!");
+    }
+}
+
+function renderPromoList() {
+    const listEl = document.getElementById('promo-list-admin');
+    listEl.innerHTML = "";
+    for(let k in myPromos) {
+        let div = document.createElement('div');
+        div.className = "promo-list-item";
+        div.innerHTML = `<span>${k} (Rp ${myPromos[k]})</span> <button class="btn-del" onclick="deletePromo('${k}')">Hapus</button>`;
+        listEl.appendChild(div);
+    }
+}
+
+function deletePromo(key) {
+    delete myPromos[key];
+    localStorage.setItem('sheyyaPromos', JSON.stringify(myPromos));
+    renderPromoList();
+}
+
+function copyNum() {
+    navigator.clipboard.writeText(document.getElementById('pay-num').innerText).then(() => alert("Nomor disalin!"));
+}
 
 function switchTab(t) {
     currentTab = t;
-    document.getElementById('tab-app').className = t === 'app' ? 'tab-btn active' : 'tab-btn';
-    document.getElementById('tab-kebsos').className = t === 'kebsos' ? 'tab-btn active' : 'tab-btn';
-    document.getElementById('display-subtitle').innerText = t === 'app' ? 'Official App Premium' : 'Social Media Booster';
-    document.getElementById('label-cat').innerText = t === 'app' ? '📺 Pilih Aplikasi' : '🚀 Pilih Sosmed';
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-'+t).classList.add('active');
     init();
 }
 
@@ -122,24 +224,18 @@ function init() {
     const data = currentTab === 'app' ? dataApp : dataKebsos;
     const catEl = document.getElementById('category');
     const stockEl = document.getElementById('stock-manager');
-    catEl.innerHTML = '<option value="">-- Pilih --</option>';
+    catEl.innerHTML = '<option value="">-- Pilih Layanan --</option>';
     stockEl.innerHTML = '';
-
     Object.keys(data).forEach(cat => {
         let isSold = soldOutStatus[cat] || false;
         let opt = new Option(isSold ? cat + " (SOLD)" : cat, cat);
         if (isSold) opt.disabled = true;
         catEl.add(opt);
-
         let item = document.createElement('div');
-        item.className = 'stock-item';
+        item.style = "display:flex; justify-content:space-between; margin-bottom:5px;";
         item.innerHTML = `<span>${cat}</span><input type="checkbox" ${isSold?'checked':''} onchange="setSoldOut('${cat}', this.checked)">`;
         stockEl.appendChild(item);
     });
-
-    const isTutup = localStorage.getItem('tokoTertutup') === 'true';
-    document.getElementById('status-toggle').checked = isTutup;
-    document.getElementById('tutup-overlay').style.display = isTutup ? "flex" : "none";
 }
 
 function setSoldOut(cat, isSold) {
@@ -148,31 +244,31 @@ function setSoldOut(cat, isSold) {
     init();
 }
 
-function toggleLayanan() {
-    const isChecked = document.getElementById('status-toggle').checked;
-    localStorage.setItem('tokoTertutup', isChecked);
-    document.getElementById('tutup-overlay').style.display = isChecked ? "flex" : "none";
-}
-
 function updateService() {
     const data = currentTab === 'app' ? dataApp : dataKebsos;
     const cat = document.getElementById('category').value;
     const servEl = document.getElementById('service');
-    servEl.innerHTML = '<option value="">-- Pilih --</option>';
+    servEl.innerHTML = '<option value="">-- Pilih Paket --</option>';
     if(cat) data[cat].forEach(i => servEl.add(new Option(i.name, i.price)));
-    applyPromo();
+    updatePrice();
 }
 
-function applyPromo() {
-    let p = parseInt(document.getElementById('service').value) || 0;
-    document.getElementById('display-price').innerText = "Rp " + p.toLocaleString('id-ID');
+function updatePrice() {
+    let base = parseInt(document.getElementById('service').value) || 0;
+    let final = Math.max(0, base - currentDiscount);
+    document.getElementById('display-price').innerText = "Rp " + final.toLocaleString('id-ID');
 }
 
-function checkAdminPassword() {
-    if(document.getElementById('redeem-code').value === "sheyya221") {
-        document.getElementById('admin-panel').style.display = "block";
-        document.getElementById('redeem-code').value = "";
-    }
+function generateInvoice() {
+    const n = document.getElementById('buyer-name').value;
+    const c = document.getElementById('category').value;
+    const s = document.getElementById('service').options[document.getElementById('service').selectedIndex]?.text;
+    const p = document.getElementById('display-price').innerText;
+    if(!n || !c || !s || s.includes("--")) return alert("Lengkapi data!");
+
+    let html = `<b>Nama:</b> ${n}<br><b>Produk:</b> ${c}<br><b>Paket:</b> ${s}<br><b>Metode:</b> ${document.getElementById('pay-name').innerText}<br><b>Total Bayar:</b> ${p}`;
+    document.getElementById('inv-content').innerHTML = html;
+    document.getElementById('invoice-modal').style.display = "flex";
 }
 
 function sendToWA() {
@@ -180,12 +276,23 @@ function sendToWA() {
     const c = document.getElementById('category').value;
     const s = document.getElementById('service').options[document.getElementById('service').selectedIndex].text;
     const p = document.getElementById('display-price').innerText;
-    if(!n || !c || s.includes("--")) return alert("Lengkapi data!");
-    window.open(`https://wa.me/62895324866749?text=Halo%20Sheyya,%20mau%20order:%0A%0AToko:%20Sheyya%20App%20Prem%20%26%20Kebsos%0AJenis:%20${currentTab.toUpperCase()}%0AItem:%20${c}%20(${s})%0ANama:%20${n}%0ATotal:%20${p}`);
+    const text = `*ORDER BARU - SHEYYA STORE*%0A%0ANama: ${n}%0AProduk: ${c}%0APaket: ${s}%0ATotal: ${p}%0AMetode: ${document.getElementById('pay-name').innerText}%0A%0AMohon diproses ya!`;
+    window.open(`https://wa.me/62895324866749?text=${text}`);
+}
+
+function togglePay() {
+    const isGopay = document.getElementById('pay-switch').checked;
+    document.getElementById('pay-name').innerText = isGopay ? "GOPAY" : "DANA";
+    document.getElementById('label-metode').innerText = isGopay ? "GOPAY" : "DANA";
+}
+
+function toggleLayanan() {
+    const isTutup = document.getElementById('status-toggle').checked;
+    localStorage.setItem('tokoTertutup', isTutup);
+    document.getElementById('tutup-overlay').style.display = isTutup ? "flex" : "none";
 }
 
 init();
 </script>
 </body>
 </html>
-
